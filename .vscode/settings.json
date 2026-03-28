@@ -1,0 +1,40 @@
+{
+  // ── Playwright Test Explorer ──────────────────────────────────────────────
+  "playwright.reuseBrowser": false,
+  "playwright.showTrace": true,
+
+  // Point the extension to this project's config
+  "playwright.env": {},
+  "playwright.options": {
+    "config": "playwright.config.js"
+  },
+
+  // ── Editor settings for test files ───────────────────────────────────────
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "editor.rulers": [100],
+
+  // ── Test Explorer UI ──────────────────────────────────────────────────────
+  "testExplorer.useNativeTesting": true,
+
+  // ── File associations ─────────────────────────────────────────────────────
+  "files.associations": {
+    "*.spec.js": "javascript"
+  },
+
+  // ── Exclude from search/explorer ──────────────────────────────────────────
+  "files.exclude": {
+    "node_modules": true,
+    "monocart-report": true,
+    "playwright-report": true,
+    "allure-results": true,
+    "allure-report": true,
+    "test-results": true
+  },
+  "search.exclude": {
+    "node_modules": true,
+    "monocart-report": true,
+    "playwright-report": true,
+    "test-results": true
+  }
+}

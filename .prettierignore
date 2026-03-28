@@ -1,0 +1,7 @@
+node_modules/
+playwright-report/
+monocart-report/
+test-results/
+tests/visual/__snapshots__/
+package-lock.json
+*.html

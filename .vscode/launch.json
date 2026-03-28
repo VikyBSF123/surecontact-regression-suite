@@ -1,0 +1,53 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run All Tests",
+      "type": "playwright",
+      "request": "launch",
+      "config": "${workspaceFolder}/playwright.config.js"
+    },
+    {
+      "name": "Debug Current Test File",
+      "type": "playwright",
+      "request": "launch",
+      "config": "${workspaceFolder}/playwright.config.js",
+      "testFile": "${file}"
+    },
+    {
+      "name": "Run Auth Tests",
+      "type": "playwright",
+      "request": "launch",
+      "config": "${workspaceFolder}/playwright.config.js",
+      "testDir": "${workspaceFolder}/tests/auth"
+    },
+    {
+      "name": "Run CRM Tests",
+      "type": "playwright",
+      "request": "launch",
+      "config": "${workspaceFolder}/playwright.config.js",
+      "testDir": "${workspaceFolder}/tests/crm"
+    },
+    {
+      "name": "Run Campaigns Tests",
+      "type": "playwright",
+      "request": "launch",
+      "config": "${workspaceFolder}/playwright.config.js",
+      "testDir": "${workspaceFolder}/tests/campaigns"
+    },
+    {
+      "name": "Run Automations Tests",
+      "type": "playwright",
+      "request": "launch",
+      "config": "${workspaceFolder}/playwright.config.js",
+      "testDir": "${workspaceFolder}/tests/automations"
+    },
+    {
+      "name": "Run Forms Tests",
+      "type": "playwright",
+      "request": "launch",
+      "config": "${workspaceFolder}/playwright.config.js",
+      "testDir": "${workspaceFolder}/tests/forms"
+    }
+  ]
+}

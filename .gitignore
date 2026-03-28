@@ -1,0 +1,16 @@
+node_modules/
+monocart-report/
+playwright-report/
+allure-results/
+allure-report/
+test-results/
+utils/auth-state.json
+.env
+*.log
+
+# Visual regression — commit __snapshots__ (baselines), ignore diff output
+tests/visual/__snapshots__/**/*-diff.png
+tests/visual/__snapshots__/**/*-actual.png
+
+# Generated metrics dashboard
+metrics-dashboard/
