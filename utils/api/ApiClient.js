@@ -16,7 +16,7 @@ export class ApiClient {
    */
   constructor(request, baseURL) {
     this.request = request;
-    this.baseURL = (baseURL || 'https://qaing.surecontact.com/api').replace(/\/$/, '');
+    this.baseURL = (baseURL || 'https://qaing.surecontact.com/api/v1').replace(/\/$/, '');
     this.authToken = null;
   }
 
@@ -64,7 +64,7 @@ export class ApiClient {
    * for all subsequent calls on this client instance.
    */
   async authenticate(email, password) {
-    const res = await this.post('/auth/login', { email, password });
+    const res = await this.post('/login', { email, password });
     if (res.ok()) {
       const body = await res.json();
       const token = body?.token || body?.data?.token || body?.access_token;

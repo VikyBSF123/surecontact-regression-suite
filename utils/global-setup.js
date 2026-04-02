@@ -15,7 +15,7 @@
 import { request } from '@playwright/test';
 
 const BASE_URL = process.env.BASE_URL || 'https://qaing.surecontact.com';
-const API_BASE = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api';
+const API_BASE = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api/v1';
 const TEST_EMAIL = process.env.TEST_EMAIL || 'vikrantd+autotest1@bsf.io';
 const TEST_PASS = process.env.TEST_PASSWORD;
 
@@ -110,7 +110,7 @@ async function checkAuth(ctx) {
   }
 
   try {
-    const res = await ctx.post(`${API_BASE}/auth/login`, {
+    const res = await ctx.post(`${API_BASE}/login`, {
       data: { email: TEST_EMAIL, password: TEST_PASS },
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       timeout: 15000,

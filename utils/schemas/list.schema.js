@@ -1,35 +1,54 @@
+/**
+ * JSON Schema — List API response shapes.
+ * Matches real SureContact Laravel API: { success, data, meta? }
+ */
+
 export const listSchema = {
   type: 'object',
-  required: ['name'],
+  required: ['uuid', 'name'],
   additionalProperties: true,
   properties: {
-    id: { type: ['integer', 'string'] },
-    uuid: { type: 'string' },
+    uuid: { type: 'string', minLength: 1 },
     name: { type: 'string', minLength: 1 },
     description: { type: ['string', 'null'] },
-    contacts_count: { type: ['integer', 'null'] },
+    type: {
+      type: ['string', 'null'],
+      enum: ['static', 'dynamic', null],
+    },
+    contact_count: { type: ['integer', 'null'] },
+    is_system: { type: ['boolean', 'null'] },
     created_at: { type: ['string', 'null'] },
     updated_at: { type: ['string', 'null'] },
   },
 };
 
+const paginationMeta = {
+  type: 'object',
+  properties: {
+    current_page: { type: 'integer' },
+    last_page: { type: 'integer' },
+    per_page: { type: 'integer' },
+    total: { type: 'integer' },
+  },
+};
+
 export const listListSchema = {
   type: 'object',
-  oneOf: [
-    {
-      required: ['data'],
-      properties: {
-        data: { type: 'array', items: listSchema },
-        total: { type: 'integer' },
-        per_page: { type: 'integer' },
-        current_page: { type: 'integer' },
-      },
-    },
-    { type: 'array', items: listSchema },
-  ],
+  required: ['success', 'data'],
+  properties: {
+    success: { type: 'boolean', const: true },
+    data: { type: 'array', items: listSchema },
+    meta: paginationMeta,
+    message: { type: ['string', 'null'] },
+  },
 };
 
 export const listResponseSchema = {
   type: 'object',
-  oneOf: [{ required: ['data'], properties: { data: listSchema } }, listSchema],
+  required: ['success', 'data'],
+  properties: {
+    success: { type: 'boolean', const: true },
+    data: listSchema,
+    message: { type: ['string', 'null'] },
+  },
 };

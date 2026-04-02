@@ -12,7 +12,7 @@
 import { request } from '@playwright/test';
 import { readFileSync } from 'fs';
 
-const BASE = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api';
+const BASE = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api/v1';
 const EMAIL = process.env.TEST_EMAIL || 'vikrantd+autotest1@bsf.io';
 const PASSWORD = process.env.TEST_PASSWORD || '@NGD*!AAXL$mY8C';
 
@@ -72,7 +72,7 @@ export default async function globalTeardown() {
   let token;
 
   try {
-    const authRes = await anonCtx.post(`${BASE}/auth/login`, {
+    const authRes = await anonCtx.post(`${BASE}/login`, {
       data: { email: EMAIL, password: PASSWORD },
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     });

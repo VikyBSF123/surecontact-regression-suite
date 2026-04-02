@@ -46,3 +46,13 @@ export function validateResponse(schema, body) {
   const data = body?.data !== undefined ? body.data : body;
   return validate(schema, data);
 }
+
+/**
+ * Validates data and returns null on success or an array of error strings on failure.
+ * Convenience wrapper for use in `expect(errors).toBeNull()` assertions.
+ */
+export function validateSchema(schema, data) {
+  const { valid, errors } = validate(schema, data);
+  if (valid) return null;
+  return errors.split('\n');
+}

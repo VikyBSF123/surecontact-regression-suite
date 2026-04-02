@@ -21,7 +21,7 @@
  *   });
  */
 
-const BASE = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api';
+const BASE = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api/v1';
 const EMAIL = process.env.TEST_EMAIL || 'vikrantd+autotest1@bsf.io';
 const PASSWORD = process.env.TEST_PASSWORD || '@NGD*!AAXL$mY8C';
 
@@ -34,7 +34,7 @@ export class ApiHelper {
 
   /** Factory method — authenticates and returns a ready-to-use ApiHelper. */
   static async create(request) {
-    const res = await request.post(`${BASE}/auth/login`, {
+    const res = await request.post(`${BASE}/login`, {
       data: { email: EMAIL, password: PASSWORD },
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     });
@@ -73,15 +73,21 @@ export class ApiHelper {
   // ── Contacts ──────────────────────────────────────────────────────────────
 
   async createContact(payload) {
-    const res = await this.post('/contacts', payload);
+    // Real API requires email nested under primary_fields
+    const { email, first_name, last_name, phone, company, job_title, status, ...rest } = payload;
+    const body = {
+      primary_fields: { email, first_name, last_name, phone, company, job_title, status },
+      ...rest,
+    };
+    const res = await this.post('/contacts', body);
     if (!res.ok()) return null;
-    const body = await res.json();
-    return body?.data ?? body;
+    const resBody = await res.json();
+    return resBody?.data ?? resBody;
   }
 
-  async deleteContact(id) {
-    if (!id) return;
-    await this.delete(`/contacts/${id}`).catch(() => {});
+  async deleteContact(uuid) {
+    if (!uuid) return;
+    await this.delete(`/contacts/${uuid}`).catch(() => {});
   }
 
   async findContactByEmail(email) {
@@ -90,6 +96,19 @@ export class ApiHelper {
     const body = await res.json();
     const items = body?.data ?? (Array.isArray(body) ? body : []);
     return items.find((c) => c.email === email) ?? null;
+  }
+
+  async updateContactStatus(uuid, status) {
+    if (!uuid) return null;
+    const res = await this.patch(`/contacts/${uuid}/status`, { status });
+    if (!res.ok()) return null;
+    const body = await res.json();
+    return body?.data ?? body;
+  }
+
+  async bulkDeleteContacts(uuids) {
+    if (!uuids?.length) return;
+    await this.delete('/bulk-contacts', { contact_uuids: uuids }).catch(() => {});
   }
 
   // ── Lists ─────────────────────────────────────────────────────────────────
@@ -132,6 +151,48 @@ export class ApiHelper {
   async deleteCampaign(id) {
     if (!id) return;
     await this.delete(`/campaigns/${id}`).catch(() => {});
+  }
+
+  // ── Automations ───────────────────────────────────────────────────────────
+
+  async createAutomation(payload) {
+    const res = await this.post('/automations', payload);
+    if (!res.ok()) return null;
+    const body = await res.json();
+    return body?.data ?? body;
+  }
+
+  async deleteAutomation(uuid) {
+    if (!uuid) return;
+    await this.delete(`/automations/${uuid}`).catch(() => {});
+  }
+
+  // ── Webhooks ──────────────────────────────────────────────────────────────
+
+  async createWebhook(payload) {
+    const res = await this.post('/webhooks', payload);
+    if (!res.ok()) return null;
+    const body = await res.json();
+    return body?.data ?? body;
+  }
+
+  async deleteWebhook(uuid) {
+    if (!uuid) return;
+    await this.delete(`/webhooks/${uuid}`).catch(() => {});
+  }
+
+  // ── API Keys ──────────────────────────────────────────────────────────────
+
+  async createApiKey(payload) {
+    const res = await this.post('/api-keys', payload);
+    if (!res.ok()) return null;
+    const body = await res.json();
+    return body?.data ?? body;
+  }
+
+  async deleteApiKey(uuid) {
+    if (!uuid) return;
+    await this.delete(`/api-keys/${uuid}`).catch(() => {});
   }
 
   // ── Utility ───────────────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
 export const BASE_URL = process.env.BASE_URL || 'https://qaing.surecontact.com';
-export const API_BASE_URL = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api';
+export const API_BASE_URL = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api/v1';
 
 export const CREDENTIALS = {
   // Shorthand for API clients that just need email + password
@@ -18,6 +18,19 @@ export const CREDENTIALS = {
     password: 'WrongPassword999',
   },
 };
+
+// Real contact status values from SureContact Laravel API
+export const CONTACT_STATUSES = [
+  'pending',
+  'active',
+  'unsubscribed',
+  'bounced',
+  'invalid',
+  'complained',
+];
+
+// Real campaign status values from SureContact Laravel API
+export const CAMPAIGN_STATUSES = ['draft', 'scheduled', 'sending', 'sent', 'paused', 'cancelled'];
 
 export const CONTACT = {
   valid: {
@@ -45,13 +58,17 @@ export const CONTACT = {
     unicodeName: 'Ñoño García',
     email: `edge+${Date.now()}@example.com`,
   },
-  // Used by API tests only — stable addresses for create / update / delete
+  // API test data — uses @qatest.io domain so global teardown auto-cleans them
   api: {
-    email: `api-create+${Date.now()}@example.com`,
+    email: `api-create+${Date.now()}@qatest.io`,
     firstName: 'ApiFirst',
     lastName: 'ApiLast',
-    updateEmail: `api-update+${Date.now()}@example.com`,
-    deleteEmail: `api-delete+${Date.now()}@example.com`,
+    updateEmail: `api-update+${Date.now()}@qatest.io`,
+    deleteEmail: `api-delete+${Date.now()}@qatest.io`,
+    patchEmail: `api-patch+${Date.now()}@qatest.io`,
+    statusEmail: `api-status+${Date.now()}@qatest.io`,
+    tagEmail: `api-tag+${Date.now()}@qatest.io`,
+    listEmail: `api-list+${Date.now()}@qatest.io`,
   },
 };
 
@@ -60,6 +77,7 @@ export const LIST = {
   empty: { name: '', description: '' },
   duplicate: { name: 'Duplicate List' },
   longName: { name: 'A'.repeat(256) },
+  // Uses "api-list-" prefix so global teardown auto-cleans them
   api: { name: `api-list-${Date.now()}` },
 };
 
@@ -67,6 +85,8 @@ export const TAG = {
   valid: { name: `test-tag-${Date.now()}` },
   empty: { name: '' },
   specialChars: { name: 'tag with spaces & symbols!' },
+  withColor: { name: `api-tag-color-${Date.now()}`, color: '#FF5733' },
+  // Uses "api-tag-" prefix so global teardown auto-cleans them
   api: { name: `api-tag-${Date.now()}` },
 };
 
@@ -78,7 +98,12 @@ export const CAMPAIGN = {
   },
   empty: { name: '', subject: '' },
   longSubject: { subject: 'A'.repeat(500) },
-  api: { name: `api-campaign-${Date.now()}` },
+  // Uses "api-campaign-" prefix so global teardown auto-cleans them
+  api: {
+    name: `api-campaign-${Date.now()}`,
+    subject: 'API Test Campaign Subject',
+    from_name: 'Test Sender',
+  },
 };
 
 export const WORKFLOW = {

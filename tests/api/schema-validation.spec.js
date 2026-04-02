@@ -18,11 +18,11 @@ import { listSchema, listListSchema } from '../../utils/schemas/list.schema.js';
 import { tagSchema, tagListSchema } from '../../utils/schemas/tag.schema.js';
 import { CREDENTIALS, CONTACT, CAMPAIGN, LIST, TAG } from '../../utils/test-data.js';
 
-const BASE = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api';
+const BASE = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api/v1';
 
 // ── Auth helper ───────────────────────────────────────────────────────────────
 async function getAuthHeaders(request) {
-  const res = await request.post(`${BASE}/auth/login`, {
+  const res = await request.post(`${BASE}/login`, {
     data: { email: CREDENTIALS.email, password: CREDENTIALS.password },
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     failOnStatusCode: false,
