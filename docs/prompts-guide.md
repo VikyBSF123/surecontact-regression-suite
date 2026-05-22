@@ -35,7 +35,7 @@ Check again if Playwright MCP is correctly configured or not
 ### Prompt 4 — Provide app access (fill in your own details)
 ```
 QA environment URL - https://your-app-qa-url.com
-Login credentials - Email - your-test-email@company.com  Password - YourTestPassword
+Login credentials - Email - vikrantd+autotest1@bsf.io  Password - @NGD*!AAXL$mY8C
 
 This is a [describe your app — e.g. "marketing automation platform"] with modules like
 [list your main modules e.g. "CRM, Campaigns, Automations, Forms, Reports, Settings"]

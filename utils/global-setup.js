@@ -13,11 +13,15 @@
  * Configured in playwright.config.js → globalSetup.
  */
 import { request } from '@playwright/test';
+import { config as loadEnv } from 'dotenv';
+// Load .env first, then overlay .env.e2e if ENV=e2e (e2e vars take precedence)
+loadEnv();
+if (process.env.ENV === 'e2e') loadEnv({ path: '.env.e2e', override: false });
 
 const BASE_URL = process.env.BASE_URL || 'https://qaing.surecontact.com';
-const API_BASE = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api/v1';
+const API_BASE = process.env.API_BASE_URL || 'https://api-qaing.surecontact.com';
 const TEST_EMAIL = process.env.TEST_EMAIL || 'vikrantd+autotest1@bsf.io';
-const TEST_PASS = process.env.TEST_PASSWORD;
+const TEST_PASS = process.env.TEST_PASSWORD || '@NGD*!AAXL$mY8C';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

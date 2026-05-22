@@ -8,7 +8,7 @@ import { test, expect } from '../../utils/fixtures.js';
 import { ContactsApi } from '../../utils/api/ContactsApi.js';
 import { CREDENTIALS } from '../../utils/test-data.js';
 
-const API_BASE = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api/v1';
+const API_BASE = process.env.API_BASE_URL || 'https://api-qaing.surecontact.com';
 
 test.describe('Bulk Actions — Contacts', { tag: ['@crm', '@regression'] }, () => {
   let api;

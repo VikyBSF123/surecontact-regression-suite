@@ -6,8 +6,10 @@ export default defineConfig({
   globalTeardown: './utils/global-teardown.js',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 1,
-  workers: process.env.CI ? 1 : 2,
+  // Phase 0 flake policy: 0 retries locally, max 1 on CI
+  retries: process.env.CI ? 1 : 0,
+  // CI uses sharding (see .github/workflows/e2e.yml); locally use 2 workers
+  workers: process.env.CI ? 2 : 2,
   timeout: 30000,
   expect: {
     timeout: 10000,
@@ -65,12 +67,27 @@ export default defineConfig({
     // ── Built-in Playwright HTML (backup) ─────────────────────────────────
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
 
+    // ── Blob reporter — used in CI to merge sharded results ───────────────
+    ...(process.env.CI ? [['blob', { outputDir: 'blob-report' }]] : []),
+
     // ── Terminal output ───────────────────────────────────────────────────
     ['list'],
   ],
 
+  // webServer: Boot the Next.js frontend locally when USE_LOCAL_SERVER=true.
+  // In CI the suite points directly at the deployed QA environment via BASE_URL.
+  // Uncomment and adapt when running the full stack locally:
+  //
+  // webServer: process.env.USE_LOCAL_SERVER ? {
+  //   command: process.env.CI ? 'npm run build && npm run start' : 'npm run dev',
+  //   url: 'http://localhost:3000',
+  //   reuseExistingServer: !process.env.CI,
+  //   timeout: 120000,
+  //   env: { ...process.env },
+  // } : undefined,
+
   use: {
-    baseURL: 'https://qaing.surecontact.com',
+    baseURL: process.env.BASE_URL || 'https://qaing.surecontact.com',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -82,6 +99,7 @@ export default defineConfig({
     // ── Auth setup (runs once, saves session) ─────────────────────────────
     {
       name: 'setup',
+      testDir: './utils',
       testMatch: '**/auth.setup.js',
     },
 

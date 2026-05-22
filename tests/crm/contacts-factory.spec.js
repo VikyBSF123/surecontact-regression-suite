@@ -44,7 +44,7 @@ test.describe('CRM - Contacts (Factory Data)', { tag: ['@critical', '@regression
     // uuid-based email prefix is virtually guaranteed to not exist
     const uniqueTerm = factory.uniqueEmail().split('@')[0];
 
-    const search = page.getByPlaceholder(/Search contact/i);
+    const search = page.getByPlaceholder(/Search contact/i).first();
     await search.fill(uniqueTerm);
     await page.waitForTimeout(800);
 

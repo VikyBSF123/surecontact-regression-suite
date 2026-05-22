@@ -4,7 +4,7 @@ import { validateSchema } from '../../utils/schemas/validator.js';
 import { contactResponseSchema, contactListSchema } from '../../utils/schemas/contact.schema.js';
 import { CREDENTIALS } from '../../utils/test-data.js';
 
-const API_BASE = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api/v1';
+const API_BASE = process.env.API_BASE_URL || 'https://api-qaing.surecontact.com';
 
 test.describe('API - Contacts', { tag: ['@api', '@regression'] }, () => {
   let api;

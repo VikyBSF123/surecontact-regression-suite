@@ -12,11 +12,11 @@
 export class ApiClient {
   /**
    * @param {import('@playwright/test').APIRequestContext} request
-   * @param {string} baseURL  — e.g. https://qaing.surecontact.com/api
+   * @param {string} baseURL  — e.g. https://api-qaing.surecontact.com
    */
   constructor(request, baseURL) {
     this.request = request;
-    this.baseURL = (baseURL || 'https://qaing.surecontact.com/api/v1').replace(/\/$/, '');
+    this.baseURL = (baseURL || 'https://api-qaing.surecontact.com').replace(/\/$/, '');
     this.authToken = null;
   }
 

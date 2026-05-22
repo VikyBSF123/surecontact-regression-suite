@@ -10,15 +10,17 @@ test.describe('CRM - Tags', { tag: ['@regression'] }, () => {
 
   test('tags page loads with correct title', async ({ page }) => {
     await expect(page).toHaveTitle(/Tags | SureContact/);
-    await expect(page.getByRole('heading', { name: 'Tags' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Tags', exact: true })).toBeVisible();
   });
 
   test('tags page shows Create Tag / Add Tag button', async ({ page }) => {
-    await expect(page.getByRole('button', { name: /create tag|add tag|new tag/i })).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: /create tag|add tag|new tag/i }).first()
+    ).toBeVisible();
   });
 
   test('tags page shows search/filter input', async ({ page }) => {
-    await expect(page.getByPlaceholder(/search/i)).toBeVisible();
+    await expect(page.getByPlaceholder(/search/i).first()).toBeVisible();
   });
 
   test('empty state shown when no tags exist', async ({ page }) => {
@@ -34,14 +36,18 @@ test.describe('CRM - Tags', { tag: ['@regression'] }, () => {
   // ── Create Tag ─────────────────────────────────────────────────────────────
 
   test('create tag button opens creation form', async ({ page }) => {
-    await page.getByRole('button', { name: /create tag|add tag|new tag/i }).click();
-    await expect(
-      page.getByRole('dialog').or(page.getByRole('textbox', { name: /name/i }))
-    ).toBeVisible({ timeout: 8000 });
+    await page
+      .getByRole('button', { name: /create tag|add tag|new tag/i })
+      .first()
+      .click();
+    await expect(page.getByRole('dialog').first()).toBeVisible({ timeout: 8000 });
   });
 
   test('create tag with valid name succeeds', async ({ page }) => {
-    await page.getByRole('button', { name: /create tag|add tag|new tag/i }).click();
+    await page
+      .getByRole('button', { name: /create tag|add tag|new tag/i })
+      .first()
+      .click();
     await page.waitForTimeout(500);
 
     const nameField = page.getByRole('textbox', { name: /name/i });
@@ -56,21 +62,24 @@ test.describe('CRM - Tags', { tag: ['@regression'] }, () => {
   });
 
   test('create tag fails with empty name', async ({ page }) => {
-    await page.getByRole('button', { name: /create tag|add tag|new tag/i }).click();
+    await page
+      .getByRole('button', { name: /create tag|add tag|new tag/i })
+      .first()
+      .click();
     await page.waitForTimeout(500);
 
     const saveBtn = page.getByRole('button', { name: /save|create|add/i }).last();
     await saveBtn.click();
 
     await expect(
-      page.getByText(/required|name is required/i).or(page.locator('[class*="error"]'))
+      page.getByText(/required|name is required/i).or(page.locator('[data-slot="form-message"]'))
     ).toBeVisible({ timeout: 5000 });
   });
 
   // ── Search ─────────────────────────────────────────────────────────────────
 
   test('search filters tags by name', async ({ page }) => {
-    const search = page.getByPlaceholder(/search/i);
+    const search = page.getByPlaceholder(/search/i).first();
     await search.fill('zzznoresults999');
     await page.waitForTimeout(800);
     await expect(page.getByText(/no tags|no results|not found/i)).toBeVisible();
@@ -97,7 +106,10 @@ test.describe('CRM - Tags', { tag: ['@regression'] }, () => {
   // ── Edge Cases ─────────────────────────────────────────────────────────────
 
   test('tag name with unicode characters is accepted', async ({ page }) => {
-    await page.getByRole('button', { name: /create tag|add tag|new tag/i }).click();
+    await page
+      .getByRole('button', { name: /create tag|add tag|new tag/i })
+      .first()
+      .click();
     await page.waitForTimeout(500);
     const nameField = page.getByRole('textbox', { name: /name/i });
     await nameField.fill('ñoño-ünïcödé-tag');

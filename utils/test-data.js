@@ -1,5 +1,5 @@
 export const BASE_URL = process.env.BASE_URL || 'https://qaing.surecontact.com';
-export const API_BASE_URL = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api/v1';
+export const API_BASE_URL = process.env.API_BASE_URL || 'https://api-qaing.surecontact.com';
 
 export const CREDENTIALS = {
   // Shorthand for API clients that just need email + password

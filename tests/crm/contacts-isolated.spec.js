@@ -43,7 +43,7 @@ test.describe('Contacts — Search (API-seeded)', { tag: ['@critical', '@regress
     });
 
     await test.step('type email in search box', async () => {
-      const search = page.getByPlaceholder(/Search contact/i);
+      const search = page.getByPlaceholder(/Search contact/i).first();
       await search.fill(seededContact.email);
       await page.waitForTimeout(800);
     });
@@ -59,7 +59,10 @@ test.describe('Contacts — Search (API-seeded)', { tag: ['@critical', '@regress
     await test.step('navigate and search by first name', async () => {
       await page.goto('/contacts');
       await page.waitForLoadState('networkidle');
-      await page.getByPlaceholder(/Search contact/i).fill(seededContact.first_name);
+      await page
+        .getByPlaceholder(/Search contact/i)
+        .first()
+        .fill(seededContact.first_name);
       await page.waitForTimeout(800);
     });
 
@@ -74,7 +77,7 @@ test.describe('Contacts — Search (API-seeded)', { tag: ['@critical', '@regress
     await page.goto('/contacts');
     await page.waitForLoadState('networkidle');
 
-    const search = page.getByPlaceholder(/Search contact/i);
+    const search = page.getByPlaceholder(/Search contact/i).first();
 
     await test.step('perform a search', async () => {
       await search.fill(seededContact?.email ?? 'test');
@@ -126,7 +129,7 @@ test.describe('Contacts — Detail view (API-seeded)', { tag: ['@regression'] },
     await test.step('navigate to contacts and find the seeded contact', async () => {
       await page.goto('/contacts');
       await page.waitForLoadState('networkidle');
-      const search = page.getByPlaceholder(/Search contact/i);
+      const search = page.getByPlaceholder(/Search contact/i).first();
       await search.fill(seededContact.email);
       await page.waitForTimeout(800);
     });
@@ -172,7 +175,10 @@ test.describe('Contacts — Delete (API-seeded)', { tag: ['@critical', '@regress
     await test.step('navigate and search for the seeded contact', async () => {
       await page.goto('/contacts');
       await page.waitForLoadState('networkidle');
-      await page.getByPlaceholder(/Search contact/i).fill(seededContact.email);
+      await page
+        .getByPlaceholder(/Search contact/i)
+        .first()
+        .fill(seededContact.email);
       await page.waitForTimeout(800);
     });
 
@@ -245,7 +251,10 @@ test.describe('Contacts — Table with known data (API-seeded)', { tag: ['@regre
       await page.goto('/contacts');
       await page.waitForLoadState('networkidle');
 
-      await page.getByPlaceholder(/Search contact/i).fill(contact.email ?? '');
+      await page
+        .getByPlaceholder(/Search contact/i)
+        .first()
+        .fill(contact.email ?? '');
       await page.waitForTimeout(700);
 
       await expect(page.getByText(contact.email)).toBeVisible({ timeout: 6000 });

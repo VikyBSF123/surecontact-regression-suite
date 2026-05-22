@@ -65,7 +65,7 @@ test.describe('Security', { tag: ['@security', '@regression'] }, () => {
 
     test('API endpoint returns correct Content-Type', async ({ request }) => {
       // Non-authenticated endpoint to check headers without login
-      const res = await request.get('https://qaing.surecontact.com/api/health', {
+      const res = await request.get('https://api-qaing.surecontact.com/health', {
         headers: { Accept: 'application/json' },
         failOnStatusCode: false,
       });
@@ -185,7 +185,7 @@ test.describe('Security', { tag: ['@security', '@regression'] }, () => {
     });
 
     test('API /contacts returns 401 without auth token', async ({ request }) => {
-      const res = await request.get('https://qaing.surecontact.com/api/contacts', {
+      const res = await request.get('https://api-qaing.surecontact.com/contacts', {
         headers: { Accept: 'application/json' },
         failOnStatusCode: false,
       });
@@ -194,7 +194,7 @@ test.describe('Security', { tag: ['@security', '@regression'] }, () => {
     });
 
     test('API /campaigns returns 401 without auth token', async ({ request }) => {
-      const res = await request.get('https://qaing.surecontact.com/api/campaigns', {
+      const res = await request.get('https://api-qaing.surecontact.com/campaigns', {
         headers: { Accept: 'application/json' },
         failOnStatusCode: false,
       });

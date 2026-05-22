@@ -7,7 +7,7 @@ test.describe('CRM - Exports', { tag: ['@regression'] }, () => {
 
   test('exports page loads with correct title', async ({ page }) => {
     await expect(page).toHaveTitle(/Exports | SureContact/);
-    await expect(page.getByRole('heading', { name: /Exports/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Exports', exact: true })).toBeVisible();
   });
 
   test('exports page shows export history or empty state', async ({ page }) => {

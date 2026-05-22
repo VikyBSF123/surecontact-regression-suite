@@ -21,7 +21,7 @@
  *   });
  */
 
-const BASE = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api/v1';
+const BASE = process.env.API_BASE_URL || 'https://api-qaing.surecontact.com';
 const EMAIL = process.env.TEST_EMAIL || 'vikrantd+autotest1@bsf.io';
 const PASSWORD = process.env.TEST_PASSWORD || '@NGD*!AAXL$mY8C';
 

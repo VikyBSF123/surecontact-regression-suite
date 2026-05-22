@@ -18,7 +18,7 @@ import { listSchema, listListSchema } from '../../utils/schemas/list.schema.js';
 import { tagSchema, tagListSchema } from '../../utils/schemas/tag.schema.js';
 import { CREDENTIALS, CONTACT, CAMPAIGN, LIST, TAG } from '../../utils/test-data.js';
 
-const BASE = process.env.API_BASE_URL || 'https://qaing.surecontact.com/api/v1';
+const BASE = process.env.API_BASE_URL || 'https://api-qaing.surecontact.com';
 
 // ── Auth helper ───────────────────────────────────────────────────────────────
 async function getAuthHeaders(request) {

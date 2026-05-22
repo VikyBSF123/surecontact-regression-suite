@@ -10,7 +10,7 @@ test.describe('CRM - Imports', { tag: ['@regression'] }, () => {
 
   test('imports page loads with correct title', async ({ page }) => {
     await expect(page).toHaveTitle(/Imports | SureContact/);
-    await expect(page.getByRole('heading', { name: /Imports/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Imports', exact: true })).toBeVisible();
   });
 
   test('imports page shows import button or upload area', async ({ page }) => {

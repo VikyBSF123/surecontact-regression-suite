@@ -103,6 +103,38 @@ export const Factory = {
     };
   },
 
+  // ── Workspace ──────────────────────────────────────────────────────────────
+  workspace(overrides = {}) {
+    return {
+      name: `${faker.company.name()} Workspace`,
+      slug: `ws-${faker.string.alphanumeric(8).toLowerCase()}`,
+      timezone: 'UTC',
+      ...overrides,
+    };
+  },
+
+  // ── Template ───────────────────────────────────────────────────────────────
+  template(overrides = {}) {
+    return {
+      name: `${faker.word.adjective()} ${faker.word.noun()} Template`,
+      subject: faker.lorem.sentence({ min: 4, max: 10 }),
+      previewText: faker.lorem.words({ min: 5, max: 12 }),
+      html: `<html><body><h1>${faker.lorem.words(3)}</h1><p>${faker.lorem.paragraph()}</p></body></html>`,
+      ...overrides,
+    };
+  },
+
+  // ── Landing Page ───────────────────────────────────────────────────────────
+  page(overrides = {}) {
+    return {
+      name: `${faker.word.adjective()} ${faker.word.noun()} Page`,
+      slug: `lp-${faker.string.alphanumeric(8).toLowerCase()}`,
+      title: faker.lorem.words({ min: 3, max: 7 }),
+      description: faker.lorem.sentence(),
+      ...overrides,
+    };
+  },
+
   // ── Helpers ────────────────────────────────────────────────────────────────
 
   /** A valid-looking email that is unlikely to exist in the system. */

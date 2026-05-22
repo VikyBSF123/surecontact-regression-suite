@@ -7,7 +7,7 @@ export class ContactsPage extends BasePage {
     this.addContactBtn = page.getByRole('button', { name: 'Add Contact' }).first();
     this.importBtn = page.getByRole('button', { name: 'Import' });
     this.exportBtn = page.getByRole('button', { name: 'Export' });
-    this.searchInput = page.getByPlaceholder(/Search contact/i);
+    this.searchInput = page.getByPlaceholder(/Search contact/i).first();
     this.table = page.getByRole('table');
     this.emptyState = page.getByText('No contacts yet');
   }
