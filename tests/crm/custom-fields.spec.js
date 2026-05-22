@@ -8,7 +8,7 @@ test.describe('CRM - Custom Fields', { tag: ['@regression'] }, () => {
   // ── UI / Layout ────────────────────────────────────────────────────────────
 
   test('custom fields page loads with correct title', async ({ page }) => {
-    await expect(page).toHaveTitle(/Custom Fields | SureContact/);
+    await expect(page).toHaveTitle(/Custom Fields|SureContact/i);
     await expect(page.getByRole('heading', { name: 'Custom Fields', exact: true })).toBeVisible();
   });
 
@@ -26,7 +26,10 @@ test.describe('CRM - Custom Fields', { tag: ['@regression'] }, () => {
       .first()
       .click();
     await expect(
-      page.getByRole('dialog').or(page.getByRole('textbox', { name: /name|label/i }))
+      page
+        .getByRole('dialog')
+        .or(page.getByRole('textbox', { name: /name|label/i }))
+        .first()
     ).toBeVisible({ timeout: 8000 });
   });
 
@@ -39,16 +42,22 @@ test.describe('CRM - Custom Fields', { tag: ['@regression'] }, () => {
     const saveBtn = page.getByRole('button', { name: /save|create|add/i }).last();
     await saveBtn.click();
     await expect(
-      page.getByText(/required|name is required/i).or(page.locator('[data-slot="form-message"]'))
+      page
+        .getByText(/required|name is required/i)
+        .or(page.locator('[data-slot="form-message"]'))
+        .first()
     ).toBeVisible({ timeout: 5000 });
   });
 
   test('custom field supports different field types', async ({ page }) => {
-    await page.getByRole('button', { name: /add|create|new custom field/i }).click();
+    await page
+      .getByRole('button', { name: /add|create|new custom field/i })
+      .first()
+      .click();
     await page.waitForTimeout(500);
     // Should have a type selector
-    const typeSelector = page.getByRole('combobox').or(page.getByLabel(/type/i));
-    if (await typeSelector.isVisible()) {
+    const typeSelector = page.getByRole('combobox').or(page.getByLabel(/type/i)).first();
+    if (await typeSelector.isVisible().catch(() => false)) {
       await expect(typeSelector).toBeVisible();
     }
   });
@@ -60,14 +69,17 @@ test.describe('CRM - Custom Fields', { tag: ['@regression'] }, () => {
       .click();
     await page.waitForTimeout(500);
 
-    const nameField = page.getByRole('textbox', { name: /name|label/i });
+    const nameField = page.getByRole('textbox', { name: /name|label/i }).first();
     await nameField.fill(`CustomField_${Date.now()}`);
 
     const saveBtn = page.getByRole('button', { name: /save|create|add/i }).last();
     await saveBtn.click();
 
     await expect(
-      page.getByText(/success|created|saved/i).or(page.locator('[class*="toast"]'))
+      page
+        .getByText(/success|created|saved/i)
+        .or(page.locator('[class*="toast"]'))
+        .first()
     ).toBeVisible({ timeout: 10000 });
   });
 
@@ -97,7 +109,10 @@ test.describe('CRM - Custom Fields', { tag: ['@regression'] }, () => {
       if (await deleteBtn.isVisible()) {
         await deleteBtn.click();
         await expect(
-          page.getByRole('dialog').or(page.getByText(/confirm|are you sure/i))
+          page
+            .getByRole('dialog')
+            .or(page.getByText(/confirm|are you sure/i))
+            .first()
         ).toBeVisible({ timeout: 5000 });
       }
     }

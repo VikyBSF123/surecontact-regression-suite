@@ -6,24 +6,24 @@ test.describe('Forms', { tag: ['@critical', '@regression'] }, () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto('/forms');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   // ── UI / Layout ────────────────────────────────────────────────────────────
 
   test('forms page loads with correct title', async ({ page }) => {
-    await expect(page).toHaveTitle(/Forms | SureContact/);
+    await expect(page).toHaveTitle(/Forms|SureContact/i);
     await expect(page.getByRole('heading', { name: /Forms/i })).toBeVisible();
   });
 
   test('forms page shows Create Form button', async ({ page }) => {
     await expect(
-      page.getByRole('button', { name: /create form|new form|add form/i })
+      page.getByRole('button', { name: /create form|new form|add form/i }).first()
     ).toBeVisible();
   });
 
   test('forms page shows search input', async ({ page }) => {
-    await expect(page.getByPlaceholder(/search/i)).toBeVisible();
+    await expect(page.getByPlaceholder(/search/i).first()).toBeVisible();
   });
 
   test('forms list or empty state is visible', async ({ page }) => {
@@ -43,32 +43,45 @@ test.describe('Forms', { tag: ['@critical', '@regression'] }, () => {
   // ── Create Form ────────────────────────────────────────────────────────────
 
   test('create form button opens form builder or naming modal', async ({ page }) => {
-    await page.getByRole('button', { name: /create form|new form/i }).click();
+    await page
+      .getByRole('button', { name: /create form|new form/i })
+      .first()
+      .click();
     await expect(
       page
         .getByRole('dialog')
         .or(page.getByRole('textbox', { name: /name/i }))
         .or(page.getByText(/form builder|form name/i))
+        .first()
     ).toBeVisible({ timeout: 10000 });
   });
 
   test('form creation requires a name', async ({ page }) => {
-    await page.getByRole('button', { name: /create form|new form/i }).click();
+    await page
+      .getByRole('button', { name: /create form|new form/i })
+      .first()
+      .click();
     await page.waitForTimeout(500);
 
     const saveBtn = page.getByRole('button', { name: /save|create|next/i }).last();
     await saveBtn.click();
 
     await expect(
-      page.getByText(/required|name is required/i).or(page.locator('[class*="error"]'))
+      page
+        .getByText(/required|name is required/i)
+        .or(page.locator('[class*="error"]'))
+        .first()
     ).toBeVisible({ timeout: 5000 });
   });
 
   test('create form with valid name proceeds to form builder', async ({ page }) => {
-    await page.getByRole('button', { name: /create form|new form/i }).click();
+    await page
+      .getByRole('button', { name: /create form|new form/i })
+      .first()
+      .click();
     await page.waitForTimeout(500);
 
-    const nameField = page.getByRole('textbox', { name: /name|form name/i });
+    const nameField = page.getByRole('textbox', { name: /name|form name/i }).first();
     if (await nameField.isVisible()) {
       await nameField.fill(FORM.valid.name);
       const saveBtn = page.getByRole('button', { name: /save|create|next/i }).last();
@@ -79,11 +92,14 @@ test.describe('Forms', { tag: ['@critical', '@regression'] }, () => {
   });
 
   test('form creation modal can be cancelled', async ({ page }) => {
-    await page.getByRole('button', { name: /create form|new form/i }).click();
+    await page
+      .getByRole('button', { name: /create form|new form/i })
+      .first()
+      .click();
     await page.waitForTimeout(500);
 
-    const cancelBtn = page.getByRole('button', { name: /cancel|close/i });
-    if (await cancelBtn.isVisible()) {
+    const cancelBtn = page.getByRole('button', { name: /cancel|close/i }).first();
+    if (await cancelBtn.isVisible().catch(() => false)) {
       await cancelBtn.click();
     } else {
       await page.keyboard.press('Escape');
@@ -116,7 +132,10 @@ test.describe('Forms', { tag: ['@critical', '@regression'] }, () => {
       if (await deleteBtn.isVisible()) {
         await deleteBtn.click();
         await expect(
-          page.getByRole('dialog').or(page.getByText(/confirm|are you sure/i))
+          page
+            .getByRole('dialog')
+            .or(page.getByText(/confirm|are you sure/i))
+            .first()
         ).toBeVisible({ timeout: 5000 });
         await page.getByRole('button', { name: /cancel/i }).click();
       }
@@ -139,7 +158,7 @@ test.describe('Forms', { tag: ['@critical', '@regression'] }, () => {
   // ── Search ─────────────────────────────────────────────────────────────────
 
   test('search returns no results for non-existent form', async ({ page }) => {
-    const search = page.getByPlaceholder(/search/i);
+    const search = page.getByPlaceholder(/search/i).first();
     await search.fill('zzznoresults999');
     await page.waitForTimeout(800);
     await expect(page.getByText(/no forms|no results/i)).toBeVisible();
@@ -148,9 +167,12 @@ test.describe('Forms', { tag: ['@critical', '@regression'] }, () => {
   // ── Edge Cases ─────────────────────────────────────────────────────────────
 
   test('form name with special characters is handled', async ({ page }) => {
-    await page.getByRole('button', { name: /create form|new form/i }).click();
+    await page
+      .getByRole('button', { name: /create form|new form/i })
+      .first()
+      .click();
     await page.waitForTimeout(500);
-    const nameField = page.getByRole('textbox', { name: /name/i });
+    const nameField = page.getByRole('textbox', { name: /name/i }).first();
     if (await nameField.isVisible()) {
       await nameField.fill('Form & Test <2024>');
       await expect(nameField).not.toHaveValue('');

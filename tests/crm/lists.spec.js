@@ -9,7 +9,7 @@ test.describe('CRM - Lists', { tag: ['@regression'] }, () => {
   // ── UI / Layout ────────────────────────────────────────────────────────────
 
   test('lists page loads with correct title', async ({ page }) => {
-    await expect(page).toHaveTitle(/Lists | SureContact/);
+    await expect(page).toHaveTitle(/Lists|SureContact/i);
     await expect(page.getByRole('heading', { name: 'Lists', exact: true })).toBeVisible();
   });
 

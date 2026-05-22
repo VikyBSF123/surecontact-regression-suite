@@ -31,6 +31,10 @@ function dynamicMasks(page) {
 
 test.describe('Visual Regression', { tag: ['@visual', '@regression'] }, () => {
   test.beforeEach(async ({ page }) => {
+    test.skip(
+      !!process.env.CI,
+      'Visual baselines require local generation — run npx playwright test tests/visual/ --update-snapshots first'
+    );
     // Disable transitions and animations globally for stable captures
     await page.addStyleTag({
       content: `

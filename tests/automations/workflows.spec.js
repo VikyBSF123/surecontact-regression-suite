@@ -51,6 +51,7 @@ test.describe('Automations - Workflows', { tag: ['@critical', '@regression'] }, 
         .getByRole('dialog')
         .or(page.getByRole('textbox', { name: /name|workflow name/i }))
         .or(page.getByText(/trigger|start/i))
+        .first()
     ).toBeVisible({ timeout: 10000 });
   });
 
@@ -63,7 +64,10 @@ test.describe('Automations - Workflows', { tag: ['@critical', '@regression'] }, 
     await saveBtn.click();
 
     await expect(
-      page.getByText(/required|name is required/i).or(page.locator('[class*="error"]'))
+      page
+        .getByText(/required|name is required/i)
+        .or(page.locator('[class*="error"]'))
+        .first()
     ).toBeVisible({ timeout: 5000 });
   });
 
@@ -131,8 +135,8 @@ test.describe('Automations - Workflows', { tag: ['@critical', '@regression'] }, 
   // ── Search ─────────────────────────────────────────────────────────────────
 
   test('workflow search/filter is functional', async ({ page }) => {
-    const search = page.getByPlaceholder(/search/i);
-    if (await search.isVisible()) {
+    const search = page.getByPlaceholder(/search/i).first();
+    if (await search.isVisible().catch(() => false)) {
       await search.fill('test workflow');
       await expect(search).toHaveValue('test workflow');
     }

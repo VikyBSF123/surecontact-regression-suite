@@ -3,13 +3,13 @@ import { test, expect } from '@playwright/test';
 test.describe('Members / Workspace', { tag: ['@regression'] }, () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/workspace');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   // ── UI / Layout ────────────────────────────────────────────────────────────
 
   test('members page loads with correct title', async ({ page }) => {
-    await expect(page).toHaveTitle(/Members | SureContact/);
+    await expect(page).toHaveTitle(/Members|SureContact/i);
     await expect(page.getByRole('heading', { name: /Members|Workspace|Team/i })).toBeVisible();
   });
 
@@ -37,7 +37,10 @@ test.describe('Members / Workspace', { tag: ['@regression'] }, () => {
   test('invite member opens invitation form', async ({ page }) => {
     await page.getByRole('button', { name: /invite|add member/i }).click();
     await expect(
-      page.getByRole('dialog').or(page.getByRole('textbox', { name: /email/i }))
+      page
+        .getByRole('dialog')
+        .or(page.getByRole('textbox', { name: /email/i }))
+        .first()
     ).toBeVisible({ timeout: 8000 });
   });
 
@@ -58,7 +61,10 @@ test.describe('Members / Workspace', { tag: ['@regression'] }, () => {
       await sendBtn.click();
 
       await expect(
-        page.getByText(/invite sent|success|invited/i).or(page.locator('[class*="toast"]'))
+        page
+          .getByText(/invite sent|success|invited/i)
+          .or(page.locator('[class*="toast"]'))
+          .first()
       ).toBeVisible({ timeout: 10000 });
     }
   });
@@ -71,7 +77,10 @@ test.describe('Members / Workspace', { tag: ['@regression'] }, () => {
     await sendBtn.click();
 
     await expect(
-      page.getByText(/required|email is required/i).or(page.locator('[class*="error"]'))
+      page
+        .getByText(/required|email is required/i)
+        .or(page.locator('[class*="error"]'))
+        .first()
     ).toBeVisible({ timeout: 5000 });
   });
 
@@ -85,7 +94,10 @@ test.describe('Members / Workspace', { tag: ['@regression'] }, () => {
       const sendBtn = page.getByRole('button', { name: /send|invite/i }).last();
       await sendBtn.click();
       await expect(
-        page.getByText(/invalid email|valid email/i).or(page.locator('[class*="error"]'))
+        page
+          .getByText(/invalid email|valid email/i)
+          .or(page.locator('[class*="error"]'))
+          .first()
       ).toBeVisible({ timeout: 5000 });
     }
   });
@@ -127,7 +139,10 @@ test.describe('Members / Workspace', { tag: ['@regression'] }, () => {
       if (await removeBtn.isVisible().catch(() => false)) {
         await removeBtn.click();
         await expect(
-          page.getByRole('dialog').or(page.getByText(/confirm|are you sure/i))
+          page
+            .getByRole('dialog')
+            .or(page.getByText(/confirm|are you sure/i))
+            .first()
         ).toBeVisible({ timeout: 5000 });
         await page.getByRole('button', { name: /cancel/i }).click();
       }

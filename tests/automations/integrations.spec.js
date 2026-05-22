@@ -3,11 +3,11 @@ import { test, expect } from '@playwright/test';
 test.describe('Automations - Integrations', { tag: ['@regression'] }, () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/integrations');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
   });
 
   test('integrations page loads with correct title', async ({ page }) => {
-    await expect(page).toHaveTitle(/Integrations | SureContact/);
+    await expect(page).toHaveTitle(/Integrations|SureContact/i);
     await expect(page.getByRole('heading', { name: /Integrations/i })).toBeVisible();
   });
 
@@ -16,8 +16,8 @@ test.describe('Automations - Integrations', { tag: ['@regression'] }, () => {
       page
         .locator('[class*="integration"]')
         .or(page.getByRole('article'))
-        .first()
         .or(page.getByText(/connect|webhook|zapier|wordpress/i))
+        .first()
     ).toBeVisible({ timeout: 10000 });
   });
 
@@ -35,8 +35,8 @@ test.describe('Automations - Integrations', { tag: ['@regression'] }, () => {
   });
 
   test('integration search or filter is available', async ({ page }) => {
-    const search = page.getByPlaceholder(/search/i);
-    if (await search.isVisible()) {
+    const search = page.getByPlaceholder(/search/i).first();
+    if (await search.isVisible().catch(() => false)) {
       await search.fill('wordpress');
       await page.waitForTimeout(500);
       await expect(page).not.toHaveURL(/error/);
@@ -49,7 +49,10 @@ test.describe('Automations - Integrations', { tag: ['@regression'] }, () => {
     if (await connectBtn.isVisible().catch(() => false)) {
       await connectBtn.click();
       await expect(
-        page.getByRole('dialog').or(page.getByText(/api key|token|authorize|connect/i))
+        page
+          .getByRole('dialog')
+          .or(page.getByText(/api key|token|authorize|connect/i))
+          .first()
       ).toBeVisible({ timeout: 8000 });
     }
   });

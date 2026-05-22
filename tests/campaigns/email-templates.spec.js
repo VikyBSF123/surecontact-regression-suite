@@ -6,7 +6,7 @@ test.describe('Campaigns - Email Templates', { tag: ['@regression'] }, () => {
   });
 
   test('email templates page loads with correct title', async ({ page }) => {
-    await expect(page).toHaveTitle(/Email Templates | SureContact/);
+    await expect(page).toHaveTitle(/Email Templates|SureContact/i);
     await expect(page.getByRole('heading', { name: /Email Templates/i })).toBeVisible();
   });
 

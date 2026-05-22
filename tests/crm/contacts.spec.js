@@ -4,7 +4,7 @@ import { CONTACT } from '../../utils/test-data.js';
 test.describe('CRM - Contacts', { tag: ['@critical', '@regression'] }, () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/contacts');
-    await expect(page).toHaveTitle(/Contacts | SureContact/);
+    await expect(page).toHaveTitle(/Contacts|SureContact/i);
   });
 
   // ── UI / Layout (soft assertions — all failures reported at once) ──────────

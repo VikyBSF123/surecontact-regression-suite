@@ -67,6 +67,13 @@ async function collectMetrics(page) {
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 test.describe('Performance — Core Web Vitals', { tag: ['@performance', '@regression'] }, () => {
+  test.beforeEach(() => {
+    test.skip(
+      !!process.env.CI,
+      'Performance thresholds are hardware-dependent — run locally with npm run test:perf'
+    );
+  });
+
   // ── Login Page ──────────────────────────────────────────────────────────────
 
   test('login page LCP is under 2500ms', async ({ page }) => {

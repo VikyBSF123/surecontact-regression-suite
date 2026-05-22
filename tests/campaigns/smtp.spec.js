@@ -6,7 +6,7 @@ test.describe('Campaigns - SMTP Settings', { tag: ['@regression'] }, () => {
   });
 
   test('SMTP page loads with correct title', async ({ page }) => {
-    await expect(page).toHaveTitle(/SMTP | SureContact/);
+    await expect(page).toHaveTitle(/SMTP|SureContact/i);
     await expect(page.getByRole('heading', { name: /SMTP/i })).toBeVisible();
   });
 

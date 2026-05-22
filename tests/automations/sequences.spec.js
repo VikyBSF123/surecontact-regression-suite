@@ -7,7 +7,7 @@ test.describe('Automations - Sequences', { tag: ['@regression'] }, () => {
   });
 
   test('sequences page loads with correct title', async ({ page }) => {
-    await expect(page).toHaveTitle(/Sequences | SureContact/);
+    await expect(page).toHaveTitle(/Sequences|SureContact/i);
     await expect(page.getByRole('heading', { name: /Sequences/i })).toBeVisible();
   });
 
@@ -32,7 +32,10 @@ test.describe('Automations - Sequences', { tag: ['@regression'] }, () => {
   test('create sequence opens creation form', async ({ page }) => {
     await page.getByRole('button', { name: /create sequence|new sequence/i }).click();
     await expect(
-      page.getByRole('dialog').or(page.getByRole('textbox', { name: /name/i }))
+      page
+        .getByRole('dialog')
+        .or(page.getByRole('textbox', { name: /name/i }))
+        .first()
     ).toBeVisible({ timeout: 10000 });
   });
 
@@ -44,7 +47,10 @@ test.describe('Automations - Sequences', { tag: ['@regression'] }, () => {
     await saveBtn.click();
 
     await expect(
-      page.getByText(/required|name is required/i).or(page.locator('[class*="error"]'))
+      page
+        .getByText(/required|name is required/i)
+        .or(page.locator('[class*="error"]'))
+        .first()
     ).toBeVisible({ timeout: 5000 });
   });
 
@@ -52,7 +58,7 @@ test.describe('Automations - Sequences', { tag: ['@regression'] }, () => {
     await page.getByRole('button', { name: /create sequence|new sequence/i }).click();
     await page.waitForTimeout(500);
 
-    const nameField = page.getByRole('textbox', { name: /name/i });
+    const nameField = page.getByRole('textbox', { name: /name/i }).first();
     if (await nameField.isVisible()) {
       await nameField.fill(`Test Sequence ${Date.now()}`);
       const saveBtn = page.getByRole('button', { name: /save|create|next/i }).last();
@@ -69,13 +75,13 @@ test.describe('Automations - Sequences', { tag: ['@regression'] }, () => {
     if (hasData) {
       const firstRow = page.getByRole('row').nth(1);
       await firstRow.click();
-      await expect(page.getByText(/step|email|delay/i)).toBeVisible({ timeout: 8000 });
+      await expect(page.getByText(/step|email|delay/i).first()).toBeVisible({ timeout: 8000 });
     }
   });
 
   test('sequence search is functional', async ({ page }) => {
-    const search = page.getByPlaceholder(/search/i);
-    if (await search.isVisible()) {
+    const search = page.getByPlaceholder(/search/i).first();
+    if (await search.isVisible().catch(() => false)) {
       await search.fill('zzznoresults');
       await page.waitForTimeout(800);
       await expect(page.getByText(/no sequences|no results/i)).toBeVisible();

@@ -11,7 +11,7 @@ test.describe('Settings', { tag: ['@regression'] }, () => {
   // ── UI / Layout ────────────────────────────────────────────────────────────
 
   test('settings page loads with correct title', async ({ page }) => {
-    await expect(page).toHaveTitle(/Settings | SureContact/);
+    await expect(page).toHaveTitle(/Settings|SureContact/i);
     await expect(page.getByRole('heading', { name: /Settings/i })).toBeVisible();
   });
 

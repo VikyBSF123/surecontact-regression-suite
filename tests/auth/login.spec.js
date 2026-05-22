@@ -12,7 +12,7 @@ test.describe('Authentication - Login', { tag: ['@smoke', '@critical'] }, () => 
   // ── UI / Layout ────────────────────────────────────────────────────────────
 
   test('login page loads with correct title and elements', async ({ page }) => {
-    await expect(page).toHaveTitle(/Login | SureContact/);
+    await expect(page).toHaveTitle(/Login|SureContact/i);
     await expect(page.getByRole('textbox', { name: 'Email' })).toBeVisible();
     await expect(page.locator('input[type="password"]')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible();

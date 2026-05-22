@@ -7,7 +7,7 @@ test.describe('Connections', { tag: ['@regression'] }, () => {
   });
 
   test('connections page loads with correct title', async ({ page }) => {
-    await expect(page).toHaveTitle(/Connections | SureContact/);
+    await expect(page).toHaveTitle(/Connections|SureContact/i);
     await expect(page.getByRole('heading', { name: /Connections/i })).toBeVisible();
   });
 

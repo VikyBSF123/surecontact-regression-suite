@@ -37,6 +37,7 @@ test.describe('Campaigns — Mocked Error States', { tag: ['@mocked', '@regressi
       page
         .getByText(/no campaigns|no results|create.*first/i)
         .or(page.getByText('No campaigns yet'))
+        .first()
     ).toBeVisible({ timeout: 8000 });
   });
 
@@ -53,7 +54,7 @@ test.describe('Campaigns — Mocked Error States', { tag: ['@mocked', '@regressi
     });
 
     await page.goto('/email-campaigns');
-    await page.getByRole('button', { name: 'Create Campaign' }).click();
+    await page.getByRole('button', { name: 'Create Campaign' }).first().click();
     await page.waitForTimeout(500);
 
     const nameField = page.getByRole('textbox', { name: /name|campaign name/i });

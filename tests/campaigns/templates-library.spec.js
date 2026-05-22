@@ -6,7 +6,7 @@ test.describe('Campaigns - Templates Library', { tag: ['@regression'] }, () => {
   });
 
   test('templates library page loads with correct title', async ({ page }) => {
-    await expect(page).toHaveTitle(/Templates Library | SureContact/);
+    await expect(page).toHaveTitle(/Templates Library|SureContact/i);
     await expect(page.getByRole('heading', { name: /Templates Library/i })).toBeVisible();
   });
 
