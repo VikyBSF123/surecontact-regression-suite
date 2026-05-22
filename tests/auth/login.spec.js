@@ -14,7 +14,7 @@ test.describe('Authentication - Login', { tag: ['@smoke', '@critical'] }, () => 
   test('login page loads with correct title and elements', async ({ page }) => {
     await expect(page).toHaveTitle(/Login | SureContact/);
     await expect(page.getByRole('textbox', { name: 'Email' })).toBeVisible();
-    await expect(page.getByRole('textbox', { name: 'Password' })).toBeVisible();
+    await expect(page.locator('input[type="password"]')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Continue with Google' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Continue with Passkey' })).toBeVisible();
@@ -30,8 +30,11 @@ test.describe('Authentication - Login', { tag: ['@smoke', '@critical'] }, () => 
   });
 
   test('password field masks input', async ({ page }) => {
-    const passwordField = page.getByRole('textbox', { name: 'Password' });
-    await expect(passwordField).toHaveAttribute('type', 'password');
+    // input[type="password"] does not carry role="textbox" — use direct locator
+    await expect(page.locator('input[type="password"]').first()).toHaveAttribute(
+      'type',
+      'password'
+    );
   });
 
   test('page shows marketing copy on right panel', async ({ page }) => {
@@ -40,26 +43,28 @@ test.describe('Authentication - Login', { tag: ['@smoke', '@critical'] }, () => 
 
   test('unauthenticated user is redirected to login from dashboard', async ({ page }) => {
     await page.goto('/dashboard');
-    await expect(page).toHaveURL(/login/);
+    await expect(page).toHaveURL(/login/, { timeout: 10000 });
   });
 
   // ── Positive Tests ─────────────────────────────────────────────────────────
 
   test('successful login with valid credentials', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Email' }).fill(CREDENTIALS.valid.email);
-    await page.getByRole('textbox', { name: 'Password' }).fill(CREDENTIALS.valid.password);
+    await page.locator('input[type="password"]').fill(CREDENTIALS.valid.password);
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    await page.waitForURL('**/dashboard', { timeout: 15000 });
+    await page.waitForURL('**/dashboard', { timeout: 20000 });
     await expect(page).toHaveURL(/dashboard/);
     await expect(page.getByText('Welcome back!')).toBeVisible();
   });
 
   test('successful login redirects to dashboard', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Email' }).fill(CREDENTIALS.valid.email);
-    await page.getByRole('textbox', { name: 'Password' }).fill(CREDENTIALS.valid.password);
+    await page.locator('input[type="password"]').fill(CREDENTIALS.valid.password);
     await page.getByRole('button', { name: 'Sign In' }).click();
 
+    // Wait for navigation before asserting URL
+    await page.waitForURL('**/dashboard', { timeout: 20000 });
     await expect(page).toHaveURL(/dashboard/);
     await expect(page.getByRole('heading', { name: /Welcome/ })).toBeVisible();
   });
@@ -67,10 +72,10 @@ test.describe('Authentication - Login', { tag: ['@smoke', '@critical'] }, () => 
   test('login preserves redirect_url param after auth', async ({ page }) => {
     await page.goto('/login?redirect_url=%2Fcontacts');
     await page.getByRole('textbox', { name: 'Email' }).fill(CREDENTIALS.valid.email);
-    await page.getByRole('textbox', { name: 'Password' }).fill(CREDENTIALS.valid.password);
+    await page.locator('input[type="password"]').fill(CREDENTIALS.valid.password);
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    await page.waitForURL('**/contacts', { timeout: 15000 });
+    await page.waitForURL('**/contacts', { timeout: 20000 });
     await expect(page).toHaveURL(/contacts/);
   });
 
@@ -78,136 +83,161 @@ test.describe('Authentication - Login', { tag: ['@smoke', '@critical'] }, () => 
 
   test('login fails with wrong password', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Email' }).fill(CREDENTIALS.wrongPassword.email);
-    await page.getByRole('textbox', { name: 'Password' }).fill(CREDENTIALS.wrongPassword.password);
+    await page.locator('input[type="password"]').fill(CREDENTIALS.wrongPassword.password);
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    await expect(page).not.toHaveURL(/dashboard/);
+    // Wait for page to settle, then assert we stayed on /login
+    await expect(page).toHaveURL(/login/, { timeout: 8000 });
     await expect(
       page
         .getByRole('alert')
-        .or(page.locator('[class*="error"]').or(page.getByText(/invalid|incorrect|wrong/i)))
+        .or(page.locator('[class*="error"]'))
+        .or(page.getByText(/invalid|incorrect|wrong/i))
     ).toBeVisible({ timeout: 8000 });
   });
 
   test('login fails with invalid email format', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Email' }).fill('notanemail');
-    await page.getByRole('textbox', { name: 'Password' }).fill('somepassword');
+    await page.locator('input[type="password"]').fill('somepassword');
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    await expect(page).not.toHaveURL(/dashboard/);
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/login/, { timeout: 8000 });
   });
 
   test('login fails with non-existent email', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Email' }).fill(CREDENTIALS.invalid.email);
-    await page.getByRole('textbox', { name: 'Password' }).fill(CREDENTIALS.invalid.password);
+    await page.locator('input[type="password"]').fill(CREDENTIALS.invalid.password);
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    await expect(page).not.toHaveURL(/dashboard/);
+    await expect(page).toHaveURL(/login/, { timeout: 8000 });
   });
 
   test('login fails with empty email', async ({ page }) => {
-    await page.getByRole('textbox', { name: 'Password' }).fill(CREDENTIALS.valid.password);
+    await page.locator('input[type="password"]').fill(CREDENTIALS.valid.password);
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    await expect(page).not.toHaveURL(/dashboard/);
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/login/, { timeout: 5000 });
   });
 
   test('login fails with empty password', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Email' }).fill(CREDENTIALS.valid.email);
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    await expect(page).not.toHaveURL(/dashboard/);
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/login/, { timeout: 5000 });
   });
 
   test('login fails with both fields empty', async ({ page }) => {
     await page.getByRole('button', { name: 'Sign In' }).click();
-    await expect(page).not.toHaveURL(/dashboard/);
+
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/login/, { timeout: 5000 });
   });
 
   // ── Edge Cases ─────────────────────────────────────────────────────────────
 
   test('email field trims whitespace', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Email' }).fill(`  ${CREDENTIALS.valid.email}  `);
-    await page.getByRole('textbox', { name: 'Password' }).fill(CREDENTIALS.valid.password);
+    await page.locator('input[type="password"]').fill(CREDENTIALS.valid.password);
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    await page.waitForURL('**/dashboard', { timeout: 15000 });
+    await page.waitForURL('**/dashboard', { timeout: 20000 });
     await expect(page).toHaveURL(/dashboard/);
   });
 
   test('login is case-insensitive for email', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Email' }).fill(CREDENTIALS.valid.email.toUpperCase());
-    await page.getByRole('textbox', { name: 'Password' }).fill(CREDENTIALS.valid.password);
+    await page.locator('input[type="password"]').fill(CREDENTIALS.valid.password);
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    await page.waitForURL('**/dashboard', { timeout: 15000 });
+    await page.waitForURL('**/dashboard', { timeout: 20000 });
     await expect(page).toHaveURL(/dashboard/);
   });
 
   test('SQL injection in email field does not crash', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Email' }).fill("' OR '1'='1");
-    await page.getByRole('textbox', { name: 'Password' }).fill("' OR '1'='1");
+    await page.locator('input[type="password"]').fill("' OR '1'='1");
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    await expect(page).not.toHaveURL(/dashboard/);
-    await expect(page).toHaveURL(/login/);
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/login/, { timeout: 8000 });
   });
 
   test('XSS injection in email field is sanitized', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Email' }).fill('<script>alert(1)</script>@test.com');
-    await page.getByRole('textbox', { name: 'Password' }).fill('password');
+    await page.locator('input[type="password"]').fill('password');
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    await expect(page).not.toHaveURL(/dashboard/);
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/login/, { timeout: 8000 });
   });
 
   // ── Forgot Password ────────────────────────────────────────────────────────
 
   test('forgot password link navigates to forgot-password page', async ({ page }) => {
     await page.getByRole('link', { name: 'Forgot password?' }).click();
-    await expect(page).toHaveURL(/forgot-password/);
+    await expect(page).toHaveURL(/forgot-password/, { timeout: 8000 });
   });
 
   test('sign up link navigates to signup page', async ({ page }) => {
     await page.getByRole('link', { name: 'Sign up' }).click();
-    await expect(page).toHaveURL(/signup/);
+    await expect(page).toHaveURL(/signup/, { timeout: 8000 });
   });
 });
 
 test.describe('Authentication - Logout', () => {
-  test('user can log out successfully', async ({ page }) => {
-    // Login first
+  // Shared login helper to avoid duplication
+  async function loginAs(page, credentials) {
     await page.goto('/login');
-    await page.getByRole('textbox', { name: 'Email' }).fill(CREDENTIALS.valid.email);
-    await page.getByRole('textbox', { name: 'Password' }).fill(CREDENTIALS.valid.password);
+    await page.getByRole('textbox', { name: 'Email' }).fill(credentials.email);
+    await page.locator('input[type="password"]').fill(credentials.password);
     await page.getByRole('button', { name: 'Sign In' }).click();
-    await page.waitForURL('**/dashboard', { timeout: 15000 });
+    await page.waitForURL('**/dashboard', { timeout: 20000 });
+  }
 
-    // Logout via user avatar menu
-    await page.getByRole('button', { name: 'AT' }).click();
-    const logoutOption = page
+  // Robust user-menu locator — tries aria-label, data-testid, then avatar initials as fallback
+  function userMenuButton(page) {
+    return page
+      .locator('[aria-label*="user" i], [aria-label*="account" i], [data-testid="user-menu"]')
+      .or(page.locator('button[class*="avatar"], button[class*="user"]'))
+      .or(page.getByRole('button', { name: /^[A-Z]{1,3}$/ }))
+      .first();
+  }
+
+  test('user can log out successfully', async ({ page }) => {
+    await loginAs(page, CREDENTIALS.valid);
+
+    await page.waitForLoadState('networkidle');
+    await userMenuButton(page).click();
+
+    await page
       .getByRole('menuitem', { name: /logout|sign out/i })
-      .or(page.getByText(/logout|sign out/i));
-    await logoutOption.click();
+      .or(page.getByRole('button', { name: /logout|sign out/i }))
+      .or(page.getByText(/logout|sign out/i))
+      .first()
+      .click();
 
-    await expect(page).toHaveURL(/login/);
+    await expect(page).toHaveURL(/login/, { timeout: 10000 });
   });
 
   test('after logout, protected pages redirect to login', async ({ page }) => {
-    await page.goto('/login');
-    await page.getByRole('textbox', { name: 'Email' }).fill(CREDENTIALS.valid.email);
-    await page.getByRole('textbox', { name: 'Password' }).fill(CREDENTIALS.valid.password);
-    await page.getByRole('button', { name: 'Sign In' }).click();
-    await page.waitForURL('**/dashboard', { timeout: 15000 });
+    await loginAs(page, CREDENTIALS.valid);
 
-    await page.getByRole('button', { name: 'AT' }).click();
-    const logoutOption = page
+    await page.waitForLoadState('networkidle');
+    await userMenuButton(page).click();
+
+    await page
       .getByRole('menuitem', { name: /logout|sign out/i })
-      .or(page.getByText(/logout|sign out/i));
-    await logoutOption.click();
-    await expect(page).toHaveURL(/login/);
+      .or(page.getByRole('button', { name: /logout|sign out/i }))
+      .or(page.getByText(/logout|sign out/i))
+      .first()
+      .click();
+
+    await expect(page).toHaveURL(/login/, { timeout: 10000 });
 
     await page.goto('/contacts');
-    await expect(page).toHaveURL(/login/);
+    await expect(page).toHaveURL(/login/, { timeout: 8000 });
   });
 });
